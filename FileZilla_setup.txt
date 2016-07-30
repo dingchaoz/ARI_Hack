@@ -1,0 +1,17 @@
+"""
+How to set up FileZilla to EdgeNode
+
+"""
+
+Goto File - Site Manager -- New Site 
+protocole choose SFTP, logon type choose ask Password, host put ejlq@da74wbedge1, leave port blank,
+then click connect
+
+
+"""
+
+How to copy files from edge node to local mac
+
+"""
+
+example: scp ejlq@da74wbedge1:/san-data/usecase/skyscout/ARI-HackWeek Documents

@@ -1,0 +1,20 @@
+Thoughts:
+
+There are a variety of image file types, some of them require special software and lib to read;
+the raw jpg images were taken from different height, angel, and some photos has partial or non houses presented;
+the orthomosaic images have done the image rectification, correction, so is good to measure distance, a question is
+would orthomosaic image be available in testing data as well? can it be used as one of the training data to build a model?
+we have 3d mesh(wavefront called, has .obj and .mtl files), point cloud, dsm(tiff) which I guess are all for 3d? how we can read those files and how to use them? 
+what differences and how they can be used together with orthomosaic? how image coordiatnes are interprated?
+
+pyglet and pywavefront were installed to read wavefront objects:
+install pyglet: pip install pyglet
+install pywavefront: download https://github.com/greenmoss/PyWavefront, goto the top directoy
+, python setup.py install and pip install PyWavefront, see https://github.com/greenmoss/PyWavefront,
+then test using import pywavefront
+
+pcl installation:
+conda install -c ccordoba12 python-pcl=0.2
+following https://anaconda.org/ccordoba12/python-pcl
+
+PIL can be used to read tiff images
