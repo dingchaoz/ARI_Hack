@@ -18,3 +18,10 @@ conda install -c ccordoba12 python-pcl=0.2
 following https://anaconda.org/ccordoba12/python-pcl
 
 PIL can be used to read tiff images
+
+07/30/2016
+Tried to use pywavefront to read .obj data in 3d mesh folder, when running the script in jupyter notebook,
+gets error cant find file in the path, tried to use os.chdir and sys.path.append, none of them work, and then
+I tried to run test.py in the folder, it says found texture coordiantes, but no normals;
+Tries to run the pyglet_demo.py in pywavefront-master/example folder, it ran successfully using uv_sphere.obj,
+when changed to use test.obj cced from 3d_mesh,got same error not found the normals
