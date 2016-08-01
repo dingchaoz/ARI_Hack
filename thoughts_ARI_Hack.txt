@@ -25,3 +25,23 @@ gets error cant find file in the path, tried to use os.chdir and sys.path.append
 I tried to run test.py in the folder, it says found texture coordiantes, but no normals;
 Tries to run the pyglet_demo.py in pywavefront-master/example folder, it ran successfully using uv_sphere.obj,
 when changed to use test.obj cced from 3d_mesh,got same error not found the normals
+
+07/31/2016
+pics were taken at 100 feet as video says mostly, each pic's taken coordiante and altitude
+was taken, but not sure the units; UVA will follow a pre-programmed 
+Thoughts on approach the project:
+1. way to filter in only roof images(33 -34 were used out of 80 for pix4d)
+2. way to find the right components to rebuild the house geometrically
+3. identify in each picture, if there is a geometric component exists, if yes, 
+find a way to crop it, and calculate the cropped part's area
+4. add up the geometric component's area
+
+gotchas: find the right house if multiple houses exist;
+         same component may get different areas estimated;
+         slopes, ridges estimation?
+         maybe a good way to count the number of bricks? and extrapolate to roof area
+         that would solve the slope calculation as well
+         
+Immediate to-dos: gets software ready to read all the files, point cloud, 3d- mesh
+				  find a big portion of the house, and find a way to crop a geometric component
+				  find a way to extract shape and compare if it is the same shape
