@@ -45,3 +45,9 @@ gotchas: find the right house if multiple houses exist;
 Immediate to-dos: gets software ready to read all the files, point cloud, 3d- mesh
 				  find a big portion of the house, and find a way to crop a geometric component
 				  find a way to extract shape and compare if it is the same shape
+
+08/03/2016
+Thoughts:
+use the tiff, xyz, dsm data
+raster data not efficient
+extract polygons and convert into vector data to calculate area
