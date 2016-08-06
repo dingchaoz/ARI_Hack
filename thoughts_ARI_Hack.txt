@@ -57,3 +57,10 @@ maybe covert to shape files? which needs at least one attribute field
 shape file is converted and polygons saved, however:
 need to find a way to visualize the shapes, tune the filter, and get the geo reference info
 probably need to understand more the shape file and how to query the attribute, field and do some calculation from there
+
+08/06/2016
+pip install pyshp -- to get shapefile module
+pip install descartes -- to get descartes module
+
+link to print shape file: http://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib
+http://gis.stackexchange.com/questions/93136/how-to-plot-geo-data-using-matplotlib-python/93201#93201
