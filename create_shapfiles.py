@@ -197,9 +197,11 @@ def main():
     #filelist = ['aug30C0884330w302230n.jpg']
 
     for infile in filelist:
+        print ('start reading files')
         img = cv2.imread(infile)
         img_grey = cv2.imread(infile, 0)
         img_gdal = gdal.Open(infile, GA_ReadOnly)
+
 
         contours, img_bool, img_bool_median_filter = \
             create_contours(img_grey, bool_cut=BOOL_CUT,
@@ -214,9 +216,11 @@ def main():
             contour_vertices = contours[i].reshape(len(contours[i]), 2)    
             contours_wgs84 = xy2wgs84(img_gdal, contour_vertices)
             polygons.append(create_polygon(contours_wgs84))
+        print ('polygons appended')
+        
         write_to_esri(polygons, infile)
     
-    merge_shape_files(args.directory)
+    #merge_shape_files(args.directory)
     
 if __name__ == '__main__':
     main()

@@ -64,3 +64,9 @@ pip install descartes -- to get descartes module
 
 link to print shape file: http://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib
 http://gis.stackexchange.com/questions/93136/how-to-plot-geo-data-using-matplotlib-python/93201#93201
+
+python create_shapfiles.py -d '../data/dsm' -e tif doesn't work
+
+need to understand how to extract contour based on color using cv2, cv2 also
+has function to computer area of contour:
+http://docs.opencv.org/trunk/dd/d49/tutorial_py_contour_features.html#gsc.tab=0
