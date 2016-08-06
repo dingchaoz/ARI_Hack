@@ -52,3 +52,8 @@ use the tiff, xyz, dsm data
 raster data not efficient
 extract polygons and convert into vector data to calculate area
 maybe covert to shape files? which needs at least one attribute field
+
+08/05/2016
+shape file is converted and polygons saved, however:
+need to find a way to visualize the shapes, tune the filter, and get the geo reference info
+probably need to understand more the shape file and how to query the attribute, field and do some calculation from there
