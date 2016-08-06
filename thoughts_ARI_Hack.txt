@@ -51,3 +51,4 @@ Thoughts:
 use the tiff, xyz, dsm data
 raster data not efficient
 extract polygons and convert into vector data to calculate area
+maybe covert to shape files? which needs at least one attribute field
