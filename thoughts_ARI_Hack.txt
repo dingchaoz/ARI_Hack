@@ -71,3 +71,6 @@ need to understand how to extract contour based on color using cv2, cv2 also
 has function to computer area of contour:
 http://docs.opencv.org/trunk/dd/d49/tutorial_py_contour_features.html#gsc.tab=0
 also need to print and show pic in a smaller size
+
+optimize performance:
+http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_core/py_optimization/py_optimization.html#optimization-techniques
