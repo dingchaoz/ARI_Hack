@@ -1,7 +1,7 @@
 """
 Author: Dingchao Zhang
 Created: Aug 9, 2016
-Script to estimate roof area using 2d data, manual RGB masking, median filetering, etc.
+Script to estimate roof area using 2d data, manual Height masking, median filetering, etc.
 """
 
 
@@ -33,6 +33,19 @@ def mask_thresh(img):
     masked = cv2.bitwise_and(img,img,mask=mask) # apply the mask to image, this will leave the pixels not falling
                                                 # into the limits all to black
     return masked
+    
+    
+def create_H_mask(filename, H = 5):
+    """
+    Create a height mask, manually setting default is 5 meters for now
+    """
+    pixelDS = gdal.Open(filename)
+    dsm_data = pixelDS.GetRasterBand(1)
+    dsm = dsm_data.ReadAsArray()
+    mask_height = dsm > 5
+    mask_height= mask_height.astype(int)
+    
+    return mask_height
 
 def resize(masked):
 
@@ -170,7 +183,27 @@ def compute_area_2d(contours,index,pixW = 0.00406,pixH = 0.00406,s2rRatio = 1.05
         
 #     return args
 
+def pipeline(filename):
+	"""
+	 Pileline all processing functions together
+	"""
+	img = cv2.imread(filename) # read img
+	masked = mask_thresh(img) # mask img using RGB
+	h_mask = create_H_mask(filename)
+	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+	median = filtering(thresh1) # median filtering 
+	contours = create_contours(median) # create contours
+	c,index = max_contour(contours) # get the largest contour pixels and index
+     #vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
 
+	pixW,pixH = georef(filename) # get pixel width and height in meters
+
+	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
+
+	print "estimated area square feet is \n", areaEst
+	
+	return 0
+	
 def main():
     
 #     args = handle_args()
@@ -184,19 +217,24 @@ def main():
                 
                 print os.path.join(subdir, infile)
                 filename = subdir+'/'+infile
-                img = cv2.imread(filename) # read img
-                masked = mask_thresh(img) # mask img
-                thresh1 = gray_thresh(masked) # grayscale and threshold masked img
-                median = filtering(thresh1) # median filtering 
-                contours = create_contours(median) # create contours
-                c,index = max_contour(contours) # get the largest contour pixels and index
-                #vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
+                pipeline(filename)
+                
+                # img = cv2.imread(filename) # read img
+#                 masked = mask_thresh(img) # mask img using RGB
+#                 h_mask = create_H_mask(filename)
+#                 thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+#                 median = filtering(thresh1) # median filtering 
+#                 contours = create_contours(median) # create contours
+#                 c,index = max_contour(contours) # get the largest contour pixels and index
+#                 vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
+# 
+#                 pixW,pixH = georef(filename) # get pixel width and height in meters
+# 
+#                 areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
+# 
+#                 print "estimated area square feet is \n", areaEst
 
-                pixW,pixH = georef(filename) # get pixel width and height in meters
-
-                areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
-
-                print "estimated area square feet is \n", areaEst
+			
 
 if __name__ == '__main__':
     main()
