@@ -1,3 +1,10 @@
+"""
+Author: Dingchao Zhang
+Created: Aug 9, 2016
+Script to estimate roof area using 2d data, manual masking, median filetering, etc.
+"""
+
+
 import cv2
 import numpy as np
 import os
