@@ -1,26 +1,18 @@
-"""
-Author: Dingchao Zhang
-Created: Aug 8th, 2016
-Script to generate border shape files from georefenced image data. Shape files
-are used to mask out image regions that have pixel values of zero so that they
-may be ignored in downstream applications to enhance computational efficiency.
-"""
-
-
 import cv2
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 import argparse
-import gdal                     #part-d of gdal 1.11
+import gdal                     #part of gdal 1.11
 from gdalconst import *         #part of gdal 1.11
 import glob
 import matplotlib.pyplot as plt
+#%matplotlib inline
 
-os.chdir(r'/Users/ejlq/Documents/ARI-HackWeek/')
+os.chdir(r'/Users/ejlq/Documents/ARI-HackWeek')
 
-file_name = 'dsm/color_relief.tif'
-img = cv2.imread(file_name)
+# file_name = 'dsm/color_relief.tif'
+# img = cv2.imread(file_name)
 
 def mask_thresh(img):
     
@@ -90,14 +82,14 @@ def vis_imgprocess(img,masked,thresh1,median,contours):
 
     """    
 
-    img_dummy = img.copy()
+    img_dummy = median.copy()
 
     plt.subplot(231), plt.imshow(img), plt.title('Original')
     plt.subplot(232), plt.imshow(masked), plt.title('Masked')
     plt.subplot(234), plt.imshow(thresh1), plt.title('Thresholded')
     plt.subplot(235), plt.imshow(median),plt.title('Median Filtered')
     
-    cv2.drawContours(img_dummy, contours, -1, (255, 0, 0), 3)
+    cv2.drawContours(img_dummy, contours, -1, (0, 255, 0), 3)
     plt.subplot(236), plt.imshow(img_dummy), plt.title('Contour')
     plt.show()
     
@@ -115,8 +107,8 @@ def georef(infile):
     geoTransf = geofile.GetGeoTransform()
 #     xOrigin = geoTransf[0]
 #     yOrigin = geoTransf[3]
-    pixelWidth = geoTransf[1]
-    pixelHeight = geoTransf[5]
+    pixelWidth = abs(geoTransf[1])
+    pixelHeight = abs(geoTransf[5])
     
     return pixelWidth,pixelHeight
     
@@ -128,53 +120,60 @@ def compute_area_2d(contours,pixW = 0.00406,pixH = 0.00406,s2rRatio = 1.054):
     Compute area using 2d info
 
     """ 
-    ##!! STUPID WAY, NEED TO FIGURE OUT A DICTIONARY COMPREHENSION
-#     maxpart = max([cv2.contourArea(x) for x in contours])
-#     area = [{i:cv2.contourArea(contours[i])} for i in range(len(contours)) if cv2.contourArea(contours[i]) == maxpart]
+    ##DICTIONARY COMPREHENSION EFFICIENT
     
-    area = cv2.contourArea(cv2.convexHull(contours[130]))*pixW*pixH*s2rRatio
+    c,index = max([(cv2.contourArea(v),i) for i,v in enumerate(contours)])
+
+    sqM2sqF = 10.7639
+    area = cv2.contourArea(cv2.convexHull(contours[index]))*pixW*pixH*s2rRatio*sqM2sqF
     return area
 
-def handle_args():
-    """
-    command line arguments parser
+# def handle_args():
+#     """
+#     command line arguments parser
     
-    """
+#     """
     
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--directory', action='store',
-                        help='Name of I/O directory')
-    parser.add_argument('-e', '--extension', action='store', default='tif',
-                        help='Extension of files to be read')
-    args = parser.parse_args()
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('-d', '--directory', action='store',
+#                         help='Name of I/O directory')
+#     parser.add_argument('-e', '--extension', action='store', default='tif',
+#                         help='Extension of files to be read')
+#     args = parser.parse_args()
     
-    if args.directory is None:
-        print('Setting I/O directory to current working directory')
-        args.directory = '.'
+#     if args.directory is None:
+#         print('Setting I/O directory to current working directory')
+#         args.directory = '.'
         
-    return args
+#     return args
 
 
 def main():
     
-    args = handle_args()
-    filelist = glob.glob(args.directory + '/*.' + args.extension)
+#     args = handle_args()
+#     filelist = glob.glob(args.directory)
     
-    for infile in filelist:
-        print "reading now"
-        img = cv2.imread(infile) # read img
-        masked = mask_thresh(img) # mask img
-        thresh1 = gray_thresh(masked) # grayscale and threshold masked img
-        median = filtering(thresh1) # median filtering 
-        contours = create_contours(median) # create contours
-    
-    	vis_imgprocess(img,masked,thresh1,median,contours) # visualize
-    
-    	pixW,pixH = georef(infile) # get pixel width and height in meters
-    
-    	areaEst = compute_area_2d(contours,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
-    
-    	print "estimated area square feet is \n", areaEst
-    
+    rootdir = '/Users/ejlq/Documents/ARI-HackWeek/training'
+
+    for subdir, dirs, files in os.walk(rootdir):
+        for infile in files: 
+            if infile.endswith('color_relief.tif'):
+                
+                print os.path.join(subdir, infile)
+                filename = subdir+'/'+infile
+                img = cv2.imread(filename) # read img
+                masked = mask_thresh(img) # mask img
+                thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+                median = filtering(thresh1) # median filtering 
+                contours = create_contours(median) # create contours
+
+                #vis_imgprocess(img,masked,thresh1,median,contours) # visualize
+
+                pixW,pixH = georef(filename) # get pixel width and height in meters
+
+                areaEst = compute_area_2d(contours,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
+
+                print "estimated area square feet is \n", areaEst
+
 if __name__ == '__main__':
     main()
