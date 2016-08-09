@@ -91,8 +91,8 @@ def vis_imgprocess(img,masked,thresh1,median,contours):
 
     img_dummy = median.copy()
 
-    plt.subplot(231), plt.imshow(img), plt.title('Original')
-    plt.subplot(232), plt.imshow(masked), plt.title('Masked')
+    plt.subplot(231), plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)), plt.title('Original')
+    plt.subplot(232), plt.imshow(cv2.cvtColor(masked, cv2.COLOR_BGR2RGB)), plt.title('Masked')
     plt.subplot(234), plt.imshow(thresh1), plt.title('Thresholded')
     plt.subplot(235), plt.imshow(median),plt.title('Median Filtered')
     
