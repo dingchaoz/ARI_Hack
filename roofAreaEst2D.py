@@ -17,7 +17,7 @@ from gdalconst import *         #part of gdal 1.11
 import glob
 import matplotlib.pyplot as plt
 
-os.chdir(r'/Users/ejlq/Documents/ARI-HackWeek/data/')
+os.chdir(r'/Users/ejlq/Documents/ARI-HackWeek/')
 
 file_name = 'dsm/color_relief.tif'
 img = cv2.imread(file_name)
