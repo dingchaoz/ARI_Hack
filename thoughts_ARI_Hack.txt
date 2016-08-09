@@ -74,3 +74,39 @@ also need to print and show pic in a smaller size
 
 optimize performance:
 http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_core/py_optimization/py_optimization.html#optimization-techniques
+
+08/08/2016
+from kick-off meeting:
+most flights taken from 100 to 400 feet height 
+allied drones AT28, DJI Inspire
+http://www.dji.com/product/inspire-1-pro-and-raw
+initial focus: 2 story and steep homes in hail prone states
+
+RMSE is the accuracy metric
+test file to submit:
+house name(50), square feet, time to run
+
+
+Delauney in scipy , convexHull has a way to compute 3d
+
+the current problem:
+contour only works for grayscale
+1. the default imread(img,0), put the house shape blurred inside the lawn
+once grayscaled, then need to find a good thresholding to whiten the house(set the pixel to 0), while
+the rest to 1(black) using some kind of color based(red,orange above to 0)
+then apply either the canny edge, or filtering or default find contour which will
+all produce polygons
+2. find good color limits to seperate the house, threshold there, and then 
+
+Gary's approach: get the image to 0 and 1 binary,and then apply a median filter there, by eyes determine
+the window size, didn't use the bool cut
+
+thresholding:http://docs.opencv.org/trunk/d7/d4d/tutorial_py_thresholding.html#gsc.tab=0
+
+PROGRESS:
+get a rough estimate by counting the sum of largest contours using manual set threshold
+need to find a way to get the several largest contours using ranking system
+to improve efficiency, need to scale down the images and then later times up the scale factor
+need to find a way to calculate angel and plot individual contour
+
+need find a way to do convexhull and plot individual contour and fillpoly
