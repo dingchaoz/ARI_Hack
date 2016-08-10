@@ -1,7 +1,8 @@
 """
 Author: Dingchao Zhang
-Created: Aug 9, 2016
-Script to estimate roof area using 2d data, manual Height masking, median filetering, etc.
+Created: Aug 10, 2016
+Script to estimate roof area using 2d data,
+and compare performance of manual Height masking vs RGB masking vs Combined.
 """
 
 
@@ -227,7 +228,8 @@ def pipeline_height(filename,dsm):
 	img = cv2.imread(filename) # read img
 	project_dsm = read_projdsm(dsm) # read project_dsm.tif file
 	masked,heightMask = mask_height(img,project_dsm) # mask img using height mask only  
-	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+	#thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+	thresh1 =  cv2.cvtColor(masked, cv2.COLOR_BGR2GRAY)  
 	median = filtering(thresh1) # median filtering 
 	contours = create_contours(median) # create contours
 	c,index = max_contour(contours) # get the largest contour pixels and index
