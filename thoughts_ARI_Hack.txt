@@ -110,3 +110,10 @@ to improve efficiency, need to scale down the images and then later times up the
 need to find a way to calculate angel and plot individual contour
 
 need find a way to do convexhull and plot individual contour and fillpoly
+
+
+08/09/2016
+project_dsm, rasterBand1 has height info, and it does not have other bands
+while color_relief has 4 bands, rgb and alpha info, no height;
+the first mask is using opencv rbg mask; now need to make a mask using height info that
+can be read from gdal
