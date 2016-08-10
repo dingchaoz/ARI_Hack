@@ -117,3 +117,22 @@ project_dsm, rasterBand1 has height info, and it does not have other bands
 while color_relief has 4 bands, rgb and alpha info, no height;
 the first mask is using opencv rbg mask; now need to make a mask using height info that
 can be read from gdal
+
+08/10/2016
+the rgb mask breaks some house apart from the middle, need to find better rgb upper threshold
+threshold removed and that get height mask better performed; however some adjacent trees are
+accounted into, and need to erode the away
+
+next step:
+pull the not working well samples
+tune one by one to get the best: height mask, threshold, and 
+and also found a way to get the labels in and calculate rmse for each sample and samples totall
+
+
+discussion with Jing:
+1. Only use height mask from project_dsm.tif, need to find a good threshold limits:
+     1.1 Convoluted Sampling from the central area of the tif, get a height distribution or
+   		directly start from the central, get the top say 30% height, using that as height threshold as
+    	self adaptive threshold method, once we find the threshold then use slight window
+     1.2 one common threshold limits, to run through all samples, and then 
+     change threshold based on the predicted area falling into too large(>1,0000) or too small( < 500)
