@@ -136,3 +136,6 @@ discussion with Jing:
     	self adaptive threshold method, once we find the threshold then use slight window
      1.2 one common threshold limits, to run through all samples, and then 
      change threshold based on the predicted area falling into too large(>1,0000) or too small( < 500)
+     
+Get one script, read opencv version and decide which findcontour and directory to use, depending
+on edgenode or local mac -- done!
