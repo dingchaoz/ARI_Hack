@@ -1,8 +1,7 @@
 """
 Author: Dingchao Zhang
-Created: Aug 10, 2016
-Script to estimate roof area using 2d data,
-and compare performance of manual Height masking vs RGB masking vs Combined.
+Created: Aug 9, 2016
+Script to estimate roof area using 2d data, manual Height masking, median filetering, etc.
 """
 
 
@@ -15,6 +14,8 @@ import gdal                     #part of gdal 1.11
 from gdalconst import *         #part of gdal 1.11
 import glob
 import matplotlib.pyplot as plt
+import csv
+import time
 #%matplotlib inline
 
 os.chdir(r'/Users/ejlq/Documents/ARI-HackWeek')
@@ -49,7 +50,7 @@ def read_projdsm(filename):
     
     return project_dsm
 
-def mask_height(img,project_dsm,thresh = 5):
+def mask_height(img,project_dsm,thresh = 6):
     """
     Apply a height mask, black out certain pixels of img based on mask
     Note: the mask has to be the same dim with img, otherwise will be error out
@@ -200,99 +201,124 @@ def compute_area_2d(contours,index,pixW = 0.00406,pixH = 0.00406,s2rRatio = 1.05
 
 
 
-def pipeline_rgb(filename):
-	"""
-	 Pileline all processing functions together using rgb mask only
-	"""
-	img = cv2.imread(filename) # read img
-	masked = mask_thresh(img) # mask img using RGB    
-	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
-	median = filtering(thresh1) # median filtering 
-	contours = create_contours(median) # create contours
-	c,index = max_contour(contours) # get the largest contour pixels and index
-     #vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
+# def pipeline_rgb(filename):
+# 	"""
+# 	 Pileline all processing functions together using rgb mask only
+# 	"""
+# 	img = cv2.imread(filename) # read img
+# 	masked = mask_thresh(img) # mask img using RGB    
+# 	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+# 	median = filtering(thresh1) # median filtering 
+# 	contours = create_contours(median) # create contours
+# 	c,index = max_contour(contours) # get the largest contour pixels and index
+# 	vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
 
-	pixW,pixH = georef(filename) # get pixel width and height in meters
+# 	pixW,pixH = georef(filename) # get pixel width and height in meters
 
-	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
+# 	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
 
-	print "estimated area square feet is using RGB mask only is \n", areaEst
+# 	print "estimated area square feet is using RGB mask only is \n", areaEst
 	
-	return 0
+# 	return 0
 	
     
 def pipeline_height(filename,dsm):
 	"""
 	 Pileline all processing functions together using height mask only
+     filename: color_relief.tif
+     dsm: project_dsm.tif
+     now the order is apply height mask then rgb mask
+     good to try a different order --TODO!!
+     
 	"""
+	start_time = time.time()
+
 	img = cv2.imread(filename) # read img
 	project_dsm = read_projdsm(dsm) # read project_dsm.tif file
 	masked,heightMask = mask_height(img,project_dsm) # mask img using height mask only  
 	#thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+    #thresh1 = gray_thresh(masked) # grayscale and threshold masked img
 	thresh1 =  cv2.cvtColor(masked, cv2.COLOR_BGR2GRAY)  
 	median = filtering(thresh1) # median filtering 
 	contours = create_contours(median) # create contours
 	c,index = max_contour(contours) # get the largest contour pixels and index
-     #vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
+	#vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
 
 	pixW,pixH = georef(filename) # get pixel width and height in meters
 
 	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
-
+	exe_time = time.time() - start_time
 	print "estimated area square feet is using height mask only is \n", areaEst
-	
-	return 0
+	print "--- %s seconds ---",exe_time
+	return areaEst,exe_time
 	
     
     
-def pipeline_combined(filename,dsm):
-	"""
-	 Pileline all processing functions together using both rgb and height mask
-	"""
-	img = cv2.imread(filename) # read img
-	img = mask_thresh(img) # mask img using RGB 
-	project_dsm = read_projdsm(dsm) # read project_dsm.tif file
-	masked,heightMask = mask_height(img,project_dsm) # mask img using height mask only  
-	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
-	median = filtering(thresh1) # median filtering 
-	contours = create_contours(median) # create contours
-	c,index = max_contour(contours) # get the largest contour pixels and index
-     #vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
+# def pipeline_combined(filename,dsm):
+# 	"""
+# 	 Pileline all processing functions together using both height and rgb mask
+# 	"""
+# 	img = cv2.imread(filename) # read img
+# 	img2 = mask_thresh(img) # mask img using RGB 
+# 	project_dsm = read_projdsm(dsm) # read project_dsm.tif file
+# 	masked,heightMask = mask_height(img2,project_dsm) # mask img using height mask only  
+# 	thresh1 = gray_thresh(masked) # grayscale and threshold masked img
+# 	median = filtering(thresh1) # median filtering 
+# 	contours = create_contours(median) # create contours
+# 	c,index = max_contour(contours) # get the largest contour pixels and index
+# 	vis_imgprocess(img,masked,thresh1,median,contours,index) # visualize
 
-	pixW,pixH = georef(filename) # get pixel width and height in meters
+# 	pixW,pixH = georef(filename) # get pixel width and height in meters
 
-	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
+# 	areaEst = compute_area_2d(contours,index,pixW = pixW,pixH = pixH,s2rRatio = 1.054)
 
-	print "estimated area square feet is using combined mask is \n", areaEst
+# 	print "estimated area square feet is using combined mask is \n", areaEst
 	
-	return 0
+# 	return 0
 	
     
-def main():
-    
-#     args = handle_args()
-#     filelist = glob.glob(args.directory)
-    
+def main():  
+    start_time = time.time()
     rootdir = '/Users/ejlq/Documents/ARI-HackWeek/training'
-
+    results = []
+    
     for subdir, dirs, files in os.walk(rootdir):
-        files2use = []
+
+        colorfile = []
+        projectfile = []
+        
         for infile in files: 
+            
+            result = []
+            
             if infile.endswith('color_relief.tif'):
                 
-                print os.path.join(subdir, infile)
                 filename = subdir+'/'+infile
-                pipeline_rgb(filename)
-                files2use.append(filename)
+                colorfile.append(filename)
+               
                 
             if infile.endswith('project_dsm.tif'):
-                
-                print os.path.join(subdir, infile)
                 filename = subdir+'/'+infile
-                files2use.append(filename)
+                projectfile.append(filename)
                 
-                pipeline_height(files2use[0],files2use[1])
-                pipeline_combined(files2use[0],files2use[1])
+        if (len(colorfile) == 1) & (len(projectfile) == 1):
+            f_name = colorfile[0].split('/')[-3]
+            print 'computing the following house now:' , f_name
+            est, exe_time= pipeline_height(colorfile[0],projectfile[0])
+            result.append(f_name)
+            result.extend([est,exe_time])
+            results.append(result)
+            
+            
+    import csv
+
+    with open("output.csv", "wb") as f:
+        writer = csv.writer(f)
+        writer.writerows(results)
+        
+    print 'results saved to output.csv'
+    print 'in total takes the followig minutes to run', (time.time() - start_time)/60
+    return results
         
                 
 
