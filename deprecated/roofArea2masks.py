@@ -1,8 +1,11 @@
 """
+SEE RoofEst_EDGE.py as the latest script
+----
+The following script is deprecated:
 Author: Dingchao Zhang
-Created: Aug 10, 2016
+Created: Aug 9, 2016
 Script to estimate roof area using 2d data, manual Height masking, median filetering, etc.
-This script is for running on EDGE NODE with opencv2
+This script is for running on LOCAL with opencv3
 """
 
 
@@ -114,9 +117,15 @@ def create_contours(median):
     Find contours
 
     """
-
-    contours, _ = cv2.findContours(median, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    return contours
+    if MODE == 'LOCAL':
+    	print 'yes'
+    
+	if MODE == 'LOCAL' :
+		im2, contours_1, hierarchy = cv2.findContours(median, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+		return contours_1
+	elif MODE == 'EDGE':
+		contours, _ = cv2.findContours(median, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    	return contours
 
 def vis_imgprocess(img,masked,thresh1,median,contours,index):
 
