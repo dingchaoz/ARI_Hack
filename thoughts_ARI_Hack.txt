@@ -139,3 +139,10 @@ discussion with Jing:
      
 Get one script, read opencv version and decide which findcontour and directory to use, depending
 on edgenode or local mac -- done!
+
+08/11/2016
+contour xyz has low points like -0.5 or like 1.2 meter height, need to find
+out why those points are there? because mask leaves only house with 6 meters above
+verify and 
+find a way to remove the points
+
