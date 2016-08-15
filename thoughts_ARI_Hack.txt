@@ -149,5 +149,6 @@ find a way to remove the points
 08/14/2016
 if square feet above 5500, drop it to 2700
 if square feed lower than 900, improve it to 1800 or 2700?
-find img coordinate
-
+find img coordinate-- too broad
+color distribution? relative color detection
+find highest point? -- shape straight line detection..
